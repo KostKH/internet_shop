@@ -1,0 +1,8 @@
+Django==4.1.7
+python-dotenv==1.0.0
+Pillow==9.4.0
+flower==1.2.0
+celery==5.2.7
+stripe==5.2.0
+weasyprint==58.1
+redis==4.5.4
