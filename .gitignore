@@ -131,3 +131,5 @@ dmypy.json
 # additional
 stripe/
 /myshop/static/
+req_reserve_copy.txt
+myshop/setup.cfg

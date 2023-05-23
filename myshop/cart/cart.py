@@ -1,7 +1,10 @@
 from decimal import Decimal
+
 from django.conf import settings
-from shop.models import Product
+
 from coupons.models import Coupon
+from shop.models import Product
+
 
 class Cart:
 
@@ -17,7 +20,7 @@ class Cart:
         self.cart = cart
         # store current applied coupon
         self.coupon_id = self.session.get('coupon_id')
-    
+
     def add(self, product, quantity=1, override_quantity=False):
         """
         Add a product to the cart or update its quantity.
@@ -65,11 +68,10 @@ class Cart:
 
     def __len__(self):
         """
-        Chapter 8 355
         Count all items in the cart.
         """
         return sum(item['quantity'] for item in self.cart.values())
-    
+
     def clear(self):
         # remove cart from session
         print(self.session.keys())
@@ -77,7 +79,7 @@ class Cart:
         self.save()
 
     def get_total_price(self):
-        return sum(Decimal(item['price']) * item['quantity'] 
+        return sum(Decimal(item['price']) * item['quantity']
                    for item in self.cart.values())
 
     @property
@@ -91,8 +93,8 @@ class Cart:
 
     def get_discount(self):
         if self.coupon:
-            return (self.coupon.discount / Decimal(100)) \
-                    * self.get_total_price()
+            return ((self.coupon.discount / Decimal(100))
+                    * self.get_total_price())
         return Decimal(0)
 
     def get_total_price_after_discount(self):

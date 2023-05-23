@@ -1,10 +1,12 @@
-from django.contrib import admin
-from .models import Order, OrderItem
-from django.utils.safestring import mark_safe
 import csv
 import datetime
+
+from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import reverse
+from django.utils.safestring import mark_safe
+
+from .models import Order, OrderItem
 
 
 def order_detail(obj):
@@ -18,7 +20,7 @@ def export_to_csv(modeladmin, request, queryset):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = content_disposition
     writer = csv.writer(response)
-    fields = [field for field in opts.get_fields() if not \
+    fields = [field for field in opts.get_fields() if not
               field.many_to_many and not field.one_to_many]
     # Write a first row with header information
     writer.writerow([field.verbose_name for field in fields])
@@ -46,6 +48,7 @@ def order_payment(obj):
         return mark_safe(html)
     return ''
 
+
 export_to_csv.short_description = 'Export to CSV'
 order_pdf.short_description = 'Invoice'
 order_payment.short_description = 'Stripe payment'
@@ -60,7 +63,7 @@ class OrderItemInline(admin.TabularInline):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['id', 'first_name', 'last_name', 'email',
                     'address', 'postal_code', 'city', 'paid',
-                    order_payment, 'created', 'updated', 
+                    order_payment, 'created', 'updated',
                     order_detail, order_pdf]
     list_filter = ['paid', 'created', 'updated']
     inlines = [OrderItemInline]

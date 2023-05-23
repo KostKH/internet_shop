@@ -1,15 +1,16 @@
-from django.urls import reverse
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.admin.views.decorators import staff_member_required
-from .models import OrderItem, Order
-from .forms import OrderCreateForm
-from cart.cart import Cart
-from .tasks import order_created
-#from .utilities import test_order_created
-from django.conf import settings
-from django.http import HttpResponse
-from django.template.loader import render_to_string
 import weasyprint
+from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.urls import reverse
+
+from cart.cart import Cart
+
+from .forms import OrderCreateForm
+from .models import Order, OrderItem
+from .tasks import order_created
 
 
 def order_create(request):
@@ -29,16 +30,14 @@ def order_create(request):
                     price=item['price'],
                     quantity=item['quantity']
                 )
-            # clear the cart
             cart.clear()
             order_created.delay(order.id)
             request.session['order_id'] = order.id
             return redirect(reverse('payment:process'))
-    else:
-        form = OrderCreateForm()
-        return render(request,
-                      'orders/order/create.html',
-                      {'cart': cart, 'form': form})
+    form = OrderCreateForm()
+    return render(request,
+                  'orders/order/create.html',
+                  {'cart': cart, 'form': form})
 
 
 @staff_member_required

@@ -1,10 +1,11 @@
-from django.db import models
-from django.conf import settings
-from shop.models import Product
 from decimal import Decimal
-from django.core.validators import MinValueValidator, MaxValueValidator
-from coupons.models import Coupon
 
+from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+
+from coupons.models import Coupon
+from shop.models import Product
 
 
 class Order(models.Model):
@@ -33,6 +34,7 @@ class Order(models.Model):
         indexes = [
             models.Index(fields=['-created']),
         ]
+
     def __str__(self):
         return f'Order {self.id}'
 
@@ -75,6 +77,6 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return str(self.id)
-    
+
     def get_cost(self):
         return self.price * self.quantity
