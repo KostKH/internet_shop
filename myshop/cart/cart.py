@@ -15,10 +15,8 @@ class Cart:
         self.session = request.session
         cart = self.session.get(settings.CART_SESSION_ID)
         if not cart:
-            # save an empty cart in the session
             cart = self.session[settings.CART_SESSION_ID] = {}
         self.cart = cart
-        # store current applied coupon
         self.coupon_id = self.session.get('coupon_id')
 
     def add(self, product, quantity=1, override_quantity=False):
@@ -38,7 +36,6 @@ class Cart:
         self.save()
 
     def save(self):
-        # mark the session as "modified" to make sure it gets saved
         self.session.modified = True
 
     def remove(self, product):
@@ -51,12 +48,7 @@ class Cart:
         self.save()
 
     def __iter__(self):
-        """
-        Iterate over the items in the cart and get the products
-        from the database.
-        """
         product_ids = self.cart.keys()
-        # get the product objects and add them to the cart
         products = Product.objects.filter(id__in=product_ids)
         cart = self.cart.copy()
         for product in products:
@@ -67,13 +59,9 @@ class Cart:
             yield item
 
     def __len__(self):
-        """
-        Count all items in the cart.
-        """
         return sum(item['quantity'] for item in self.cart.values())
 
     def clear(self):
-        # remove cart from session
         print(self.session.keys())
         del self.session[settings.CART_SESSION_ID]
         self.save()
